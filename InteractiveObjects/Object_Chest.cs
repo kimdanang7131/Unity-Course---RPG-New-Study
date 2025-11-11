@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Chest : MonoBehaviour, IDamagable
+public class Object_Chest : MonoBehaviour, IDamagable
 {
     private Rigidbody2D rb => GetComponentInChildren<Rigidbody2D>();
     private Animator anim => GetComponentInChildren<Animator>();
@@ -9,7 +9,7 @@ public class Chest : MonoBehaviour, IDamagable
     [Header("Open Detail")]
     [SerializeField] private Vector2 knockback;
 
-    public bool TakeDamage(float damage, Transform damageDealer)
+    public bool TakeDamage(float damage, float elementalDamage, ElementType element, Transform damageDealer)
     {
         fx.PlayOnDamageVfx();
         anim.SetBool("chestOpen", true);

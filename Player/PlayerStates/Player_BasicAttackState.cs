@@ -25,6 +25,7 @@ public class Player_BasicAttackState : PlayerState
         base.Enter();
         comboAttackQueued = false;
         ResetComboIfNeeded();
+        SyncAttackSpeed();
 
         // 입력된 공격 방향
         attackDir = player.moveInput.x != 0 ? ((int)player.moveInput.x) : player.facingDir;
