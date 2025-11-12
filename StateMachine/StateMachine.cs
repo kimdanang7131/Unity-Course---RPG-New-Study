@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
     public EntityState currentState { get; private set; }
     public bool canChangeState;
