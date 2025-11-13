@@ -44,7 +44,7 @@ public class Entity_Combat : MonoBehaviour
 
             if (targetGotHit)
                 vfx.CreateOnHitVFX(target.transform, attackData.isCrit, element);
-            //
+            //t
         }
     }
 
