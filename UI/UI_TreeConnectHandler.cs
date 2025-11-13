@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,21 +28,22 @@ public class UI_TreeConnectHandler : MonoBehaviour
         if (connectionImage != null)
             originalColor = connectionImage.color;
     }
-    
-    private void OnValidate()
-    {
-        if (connectionDetails.Length <= 0)
-            return;
 
-        if (connectionDetails.Length != connections.Length)
+    public UI_TreeNode[] GetChildNodes()
+    {
+        List<UI_TreeNode> childrenToReturn = new List<UI_TreeNode>();
+
+        foreach (var node in connectionDetails)
         {
-            Debug.Log("Amount of detalis should be same as amount of connection" + gameObject.name);
-            return;
+            if (node.childNode != null)
+            {
+                childrenToReturn.Add(node.childNode.GetComponent<UI_TreeNode>());
+            }
         }
 
-        UpdateAllConnections();
+        return childrenToReturn.ToArray();
     }
-
+    
     public void UpdateConnections()
     {
         for (int i = 0; i < connectionDetails.Length; i++)
@@ -86,4 +88,19 @@ public class UI_TreeConnectHandler : MonoBehaviour
 
     public void SetConnectionImage(Image image) => connectionImage = image;
     public void SetPosition(Vector2 position) => rect.anchoredPosition = position;
+
+    private void OnValidate()
+    {
+        if (connectionDetails.Length <= 0)
+            return;
+
+        if (connectionDetails.Length != connections.Length)
+        {
+            Debug.Log("Amount of detalis should be same as amount of connection" + gameObject.name);
+            return;
+        }
+
+        UpdateAllConnections();
+    }
+
 }

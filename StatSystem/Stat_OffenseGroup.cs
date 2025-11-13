@@ -15,5 +15,5 @@ public class Stat_OffenseGroup
     // 마법 데미지
     public Stat fireDamage;
     public Stat iceDamage;
-    public Stat lightingDamage;
+    public Stat lightningDamage;
 }

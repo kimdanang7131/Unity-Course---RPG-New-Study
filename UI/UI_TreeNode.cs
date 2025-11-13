@@ -34,6 +34,12 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         UpdateIconColor(GetColorByHex(lockedColorHex));
     }
 
+    void Start()
+    {
+        if (skillData.unlockedByDefault)
+            Unlock();
+    }
+
     public void Refund()
     {
         isUnlocked = false;
@@ -52,6 +58,8 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         skillTree.RemoveSkillPoints(skillData.cost);
         connectHandler.UnlockConnectionImage(true);
+
+        skillTree.skillManager.GetSkillByType(skillData.skillType).SetSkillUpgrade(skillData.upgradeData);
     }
 
     private bool CanBeUnlocked()
@@ -76,11 +84,24 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         return true;
     }
-    
+
+    // Conflict들의 모든 node들을 Lock 시킴
     private void LockConflictNodes()
     {
         foreach (var node in conflictNodes)
+        {
             node.isLocked = true;
+            node.LockChildNodes();
+        }
+    }
+    
+    // 현재 나와 연결된 모든 node들을 Lock 시킴
+    public void LockChildNodes()
+    {
+        isLocked = true;
+
+        foreach (var node in connectHandler.GetChildNodes())
+            node.LockChildNodes();
     }
 
     private void UpdateIconColor(Color color)

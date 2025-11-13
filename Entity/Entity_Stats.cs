@@ -9,11 +9,16 @@ public class Entity_Stats : MonoBehaviour
     public Stat_DefenseGroup defense;
     public Stat_MajorGroup major;
 
+    public AttackData GetAttackData(DamageScaleData scaleData)
+    {
+        return new AttackData(this, scaleData);
+    }
+
     public float GetElementalDamage(out ElementType element, float scaleFactor = 1)
     {
         float fireDamage = offense.fireDamage.GetValue();
         float iceDamage = offense.iceDamage.GetValue();
-        float lightningDamage = offense.lightingDamage.GetValue();
+        float lightningDamage = offense.lightningDamage.GetValue();
         float bonuseElementalDamage = major.intelligence.GetValue(); // 지능 1당 보너스 원소 데미지
 
         float highestDamage = fireDamage;
@@ -162,7 +167,7 @@ public class Entity_Stats : MonoBehaviour
 
             case StatType.FireDamage: return offense.fireDamage;
             case StatType.IceDamage: return offense.iceDamage;
-            case StatType.LightningDamage: return offense.lightingDamage;
+            case StatType.LightningDamage: return offense.lightningDamage;
 
             case StatType.Armor: return defense.armor;
             case StatType.Evasion: return defense.evasion;
@@ -202,7 +207,7 @@ public class Entity_Stats : MonoBehaviour
 
         offense.fireDamage.SetBaseValue(defaultStatSetup.fireDamage);
         offense.iceDamage.SetBaseValue(defaultStatSetup.iceDamage);
-        offense.lightingDamage.SetBaseValue(defaultStatSetup.lightningDamage);
+        offense.lightningDamage.SetBaseValue(defaultStatSetup.lightningDamage);
 
         defense.armor.SetBaseValue(defaultStatSetup.armor);
         defense.evasion.SetBaseValue(defaultStatSetup.evasion);
