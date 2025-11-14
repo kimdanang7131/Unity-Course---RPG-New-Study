@@ -10,6 +10,7 @@ public class UI_SkillToolTip : UI_Tooltip
 
     [SerializeField] private TextMeshProUGUI skillName;
     [SerializeField] private TextMeshProUGUI skillDesc;
+    [SerializeField] private TextMeshProUGUI skillCooldown;
     [SerializeField] private TextMeshProUGUI skillRequirements;
 
     [Space]
@@ -26,7 +27,7 @@ public class UI_SkillToolTip : UI_Tooltip
     {
         base.Awake();
         ui = GetComponentInParent<UI>();
-        skillTree = ui.GetComponentInChildren<UI_SkillTree>(true);        
+        skillTree = ui.GetComponentInChildren<UI_SkillTree>(true);
     }
 
     public override void ShowToolTip(bool show, RectTransform targetRect)
@@ -43,6 +44,7 @@ public class UI_SkillToolTip : UI_Tooltip
 
         skillName.text = node.skillData.displayName;
         skillDesc.text = node.skillData.description;
+        skillCooldown.text = "Cooldown : " + node.skillData.upgradeData.cooldown + " s.";
 
         string skillLockedTest = GetColoredText(importantInfoHex, lockedSkillText);
         string requirements = node.isLocked ? skillLockedTest : GetRequirements(node.skillData.cost, node.neededNodes, node.conflictNodes);
@@ -59,7 +61,7 @@ public class UI_SkillToolTip : UI_Tooltip
     }
     private IEnumerator TextBlinkEffectCo(TextMeshProUGUI text, float blinkinterval, int blinkCount)
     {
-        for(int i =0; i<blinkCount; i++)
+        for (int i = 0; i < blinkCount; i++)
         {
             text.text = GetColoredText(notMetConditionHex, lockedSkillText);
             yield return new WaitForSeconds(blinkinterval);
@@ -83,7 +85,7 @@ public class UI_SkillToolTip : UI_Tooltip
         {
             if (node == null)
                 continue;
-                
+
             string nodeColor = node.isUnlocked ? metConditionHex : notMetConditionHex;
             string nodeText = $"- {node.skillData.displayName}";
             string finalNodeText = GetColoredText(nodeColor, nodeText);
@@ -94,7 +96,7 @@ public class UI_SkillToolTip : UI_Tooltip
             return sb.ToString();
 
         sb.AppendLine(); // spacing
-        sb.AppendLine(GetColoredText(importantInfoHex,"Locks Out: "));
+        sb.AppendLine(GetColoredText(importantInfoHex, "Locks Out: "));
 
         foreach (var node in conflictNodes)
         {

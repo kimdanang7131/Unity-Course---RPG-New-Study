@@ -11,24 +11,23 @@ public class Skill_Dash : Skill_Base
         if (Unlocked(SkillUpgradeType.Dash_ShardOnStart) || Unlocked(SkillUpgradeType.Dash_ShardOnStartAndArrival))
             CreateShard();
     }
-    
+
     public void OnEndEffect()
     {
         if (Unlocked(SkillUpgradeType.Dash_CloneOnStartAndArrival))
             CreateClone();
-        
+
         if (Unlocked(SkillUpgradeType.Dash_ShardOnStartAndArrival))
             CreateShard();
     }
-    
+
     private void CreateShard()
     {
         skillManager.shard.CreateRawShard();
     }
-    
+
     private void CreateClone()
     {
-        Debug.Log("Create Time echo!");
-        // skill manage clone create clond
+        skillManager.timeEcho.CreateTimeEcho();
     }
 }

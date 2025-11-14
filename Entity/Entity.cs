@@ -8,14 +8,14 @@ public class Entity : MonoBehaviour
 
     public Animator anim { get; private set; }
     public Rigidbody2D rb { get; private set; }
-    public Entity_Stats stats{ get; private set; }
+    public Entity_Stats stats { get; private set; }
     protected StateMachine stateMachine;
 
     private bool facingRight = true;
     public int facingDir { get; private set; } = 1;
 
     [Header("Collision Detection")]
-    [SerializeField] protected LayerMask whatIsGround;
+    public LayerMask whatIsGround;
     [SerializeField] private float groundDistance;
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private Transform groundCheck;
@@ -34,7 +34,7 @@ public class Entity : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         stats = GetComponent<Entity_Stats>();
-        
+
         stateMachine = new StateMachine();
 
     }
@@ -61,10 +61,15 @@ public class Entity : MonoBehaviour
 
     }
 
-    public virtual void SlowDownEntity(float duration, float slowMultiplier)
+    public virtual void SlowDownEntity(float duration, float slowMultiplier, bool canOverrideSlowEffect = false)
     {
         if (slowDownCo != null)
-            StopCoroutine(slowDownCo);
+        {
+            if (canOverrideSlowEffect)
+                StopCoroutine(slowDownCo);
+            else
+                return;
+        }
 
         slowDownCo = StartCoroutine(SlowDownEntityCo(duration, slowMultiplier));
     }
@@ -72,18 +77,22 @@ public class Entity : MonoBehaviour
     protected virtual IEnumerator SlowDownEntityCo(float duration, float slowMultiplier)
     {
         yield return null;
-        
     }
-    
+
+    public virtual void StopSlowDown()
+    {
+        slowDownCo = null;
+    }
+
     public void ReceiveKnockback(Vector2 knockback, float duration)
     {
         if (knockbackCo != null)
             StopCoroutine(knockbackCo);
-            
-        
-        knockbackCo = StartCoroutine(KnockbackCo(knockback,duration));
+
+
+        knockbackCo = StartCoroutine(KnockbackCo(knockback, duration));
     }
-    
+
     private IEnumerator KnockbackCo(Vector2 knockback, float duration)
     {
         isKnocked = true;
@@ -99,7 +108,7 @@ public class Entity : MonoBehaviour
     {
         if (isKnocked)
             return;
-        
+
 
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         HandleFlip(xVelocity);
@@ -139,7 +148,7 @@ public class Entity : MonoBehaviour
     {
         Gizmos.DrawLine(groundCheck.position, groundCheck.position + new Vector3(0, -groundDistance));
         Gizmos.DrawLine(primaryWallCheck.position, primaryWallCheck.position + new Vector3(wallCheckDistance * facingDir, 0));
-        
+
         if (secondaryWallCheck != null)
             Gizmos.DrawLine(secondaryWallCheck.position, secondaryWallCheck.position + new Vector3(wallCheckDistance * facingDir, 0));
     }

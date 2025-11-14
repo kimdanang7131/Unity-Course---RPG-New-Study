@@ -16,5 +16,27 @@ public enum SkillUpgradeType
     Shard_MoveToEnemy, // 적 근처로 이동
     Shard_MultiCast, // N 차지가 있다면 바로 캐스트가능
     Shard_Teleport, // 마지막 샤드 배치한곳과 위치바꾸기
-    Shard_TeleportHPRewind // 
+    Shard_TeleportHPRewind, // 
+
+    // Sword Tree
+    SwordThrow,
+    SwordThrow_Spin,
+    SwordThrow_Pierce,
+    SwordThrow_bounce,
+
+    // Time Echo Tree
+    TimeEcho,
+    TimeEcho_SingleAttack,
+    TimeEcho_MultiAttack,
+    TimeEcho_ChanceToDuplicate,
+
+    TimeEcho_HealWisp,
+
+    TimeEcho_CleanseWisp,
+    TimeEcho_CooldownWisp,
+
+    // Domain Expansion Tree
+    Domain_SlowingDown,
+    Domain_EchoSpam,
+    Domain_ShardSpam
 }

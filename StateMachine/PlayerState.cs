@@ -22,11 +22,21 @@ public abstract class PlayerState : EntityState
     {
         base.Update();
 
-      
+
         if (input.Player.Dash.WasPressedThisFrame() && CanDash())
         {
             skillManager.dash.SetSkillOnColldown();
             stateMachine.ChangeState(player.dashState);
+        }
+
+        if (input.Player.UltimateSpell.WasPressedThisFrame() && skillManager.domainExpansion.CanUseSkill())
+        {
+            if (skillManager.domainExpansion.InstantDomain())
+                skillManager.domainExpansion.CreateDomain();
+            else
+                stateMachine.ChangeState(player.domainExpansionState);
+
+            skillManager.domainExpansion.SetSkillOnColldown();
         }
     }
 
@@ -44,7 +54,7 @@ public abstract class PlayerState : EntityState
         if (player.wallDetected)
             return false;
 
-        if (stateMachine.currentState == player.dashState)
+        if (stateMachine.currentState == player.dashState || stateMachine.currentState == player.domainExpansionState)
             return false;
 
         return true;
