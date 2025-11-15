@@ -18,6 +18,7 @@ public class Stat_SetupSO : ScriptableObject
     public float fireDamage;
     public float iceDamage;
     public float lightningDamage;
+    public float elementalDamage;
 
     [Header("Defense - Physical Damage")]
     public float armor;

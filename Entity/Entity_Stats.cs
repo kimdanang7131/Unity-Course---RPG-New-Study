@@ -83,30 +83,24 @@ public class Entity_Stats : MonoBehaviour
 
     public float GetPhysicalDamage(out bool isCrit, float scaleFactor = 1)
     {
-        float baseDamage = offense.damage.GetValue();
-        float bonusDamage = major.strength.GetValue();
-        float totalBaseDamage = baseDamage + bonusDamage; // 기본 총합데미지 ( 크리 없음 )
-
-        float baseCritChance = offense.critChance.GetValue();
-        float bonusCritChance = major.agility.GetValue() * .3f; // 능력치 보너스 크리티컬 민첩 : + 0.3퍼 민첩
-        float critChance = baseCritChance + bonusCritChance; // 보너스 치명타율
-
-        float baseCritPower = offense.critPower.GetValue();
-        float bonuseCritPower = major.strength.GetValue() * .5f; // 능력치 보너스 크리티컬 힘 : + 0.3퍼 힘
-        float critPower = (baseCritPower + bonuseCritPower) / 100; // 150 / 100 -> 1.5f 곱 / 보너스 치명타데미지
+        float baseDamage = GetBaseDamage();
+        float critChance = GetCritChance(); // 보너스 치명타율
+        float critPower = GetCritPower() / 100; // 150 / 100 -> 1.5f 곱 / 보너스 치명타데미지
 
         // 치명타 -> 기본 총합데미지 * 크리티컬 데미지 or 기본총합데미지
         isCrit = Random.Range(0, 100) < critChance;
-        float finalDamage = isCrit ? totalBaseDamage * critPower : totalBaseDamage;
+        float finalDamage = isCrit ? baseDamage * critPower : baseDamage;
 
         return finalDamage * scaleFactor;
     }
 
+    public float GetBaseDamage() => offense.damage.GetValue() + major.strength.GetValue();
+    public float GetCritChance() => offense.critChance.GetValue() + (major.agility.GetValue() * .3f); // 민첩 * 0.3%
+    public float GetCritPower() => offense.critPower.GetValue() + (major.strength.GetValue() * .5f); // 힘 * 0.5%
+
     public float GetArmorMitigation(float armorReduction)
     {
-        float baseArmor = defense.armor.GetValue();
-        float bonusArmor = major.vitality.GetValue();
-        float totalArmor = baseArmor + bonusArmor;
+        float totalArmor = GetBaseArmor();
 
         float reductionMultiplier = Mathf.Clamp(1 - armorReduction, 0, 1); // 1 - .4f = .6f;
         float effectiveArmor = totalArmor * reductionMultiplier;
@@ -117,6 +111,8 @@ public class Entity_Stats : MonoBehaviour
         float finalMitigation = Mathf.Clamp(mitigation, 0, mitigationCap);
         return finalMitigation;
     }
+
+    public float GetBaseArmor() => defense.armor.GetValue() + major.vitality.GetValue();
 
     public float GetArmorReduction()
     {
@@ -168,6 +164,7 @@ public class Entity_Stats : MonoBehaviour
             case StatType.FireDamage: return offense.fireDamage;
             case StatType.IceDamage: return offense.iceDamage;
             case StatType.LightningDamage: return offense.lightningDamage;
+            case StatType.ElementalDamage: return offense.elementalDamage;
 
             case StatType.Armor: return defense.armor;
             case StatType.Evasion: return defense.evasion;
