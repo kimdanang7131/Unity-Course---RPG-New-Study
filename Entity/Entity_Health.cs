@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class Entity_Health : MonoBehaviour, IDamagable
 {
+    public event Action OnTakingDamage;
+
     private Slider healthBar;
     private Entity entity;
     private Entity_VFX entityVfx;
@@ -75,6 +77,8 @@ public class Entity_Health : MonoBehaviour, IDamagable
         ReduceHealth(physicalDamageTaken + elementalDamageTaken);
 
         lastDamageTaken = physicalDamageTaken + elementalDamage;
+
+        OnTakingDamage?.Invoke();
         return true;
     }
 

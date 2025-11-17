@@ -9,6 +9,12 @@ public class Player_VFX : Entity_VFX
     [SerializeField] private GameObject imagEchoPrefab;
     private Coroutine imageEchoCo;
 
+
+    public void CreateEffectOf(GameObject effect, Transform target)
+    {
+        Instantiate(effect, target.position, target.rotation);
+    }
+
     public void DoImageEchoEffect(float duration)
     {
         if (imageEchoCo != null)
@@ -29,7 +35,7 @@ public class Player_VFX : Entity_VFX
             timeTracker = timeTracker + imageEchoInterval;
         }
     }
-    
+
     private void CreateImageEcho()
     {
         GameObject imageEcho = Instantiate(imagEchoPrefab, transform.position, transform.rotation);

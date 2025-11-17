@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class Inventory_Player : Inventory_Base
 {
-    private Entity_Stats playerStats;
+    private Player player;
     public List<Inventory_EquipmentSlot> equipList;
 
     protected override void Awake()
     {
         base.Awake();
-        playerStats = GetComponent<Entity_Stats>();
+        player = GetComponent<Player>();
     }
 
     public void TryEquipItem(Inventory_Item item)
@@ -31,37 +31,41 @@ public class Inventory_Player : Inventory_Base
         var slotToReplace = matchingSlots[0];
         var itemToUnequip = slotToReplace.equippedItem;
 
+        UnequipItem(itemToUnequip, slotToReplace != null);
         EquipItem(inventoryItem, slotToReplace);
-        UnequipItem(itemToUnequip);
     }
 
     // EquipmentSlot에 장착하고, 인벤토리에서는 제거한다
     private void EquipItem(Inventory_Item itemToEquip, Inventory_EquipmentSlot slot)
     {
-        slot.equippedItem = itemToEquip;
-        slot.equippedItem.AddModifiers(playerStats);
+        float savedHealthPercent = player.health.GetHealthPercent();
 
+        slot.equippedItem = itemToEquip;
+        slot.equippedItem.AddModifiers(player.stats);
+        slot.equippedItem.AddItemEffect(player);
+
+        player.health.SetHealthPercent(savedHealthPercent);
         RemoveItem(itemToEquip);
     }
 
-    public void UnequipItem(Inventory_Item itemToUnequip)
+    public void UnequipItem(Inventory_Item itemToUnequip, bool replacingItem = false)
     {
-        if (CanAddItem() == false)
+        if (CanAddItem() == false && replacingItem == false)
         {
             Debug.Log("No Space");
             return;
         }
 
-        foreach (var slot in equipList)
-        {
-            if (slot.equippedItem == itemToUnequip)
-            {
-                slot.equippedItem = null;
-                break;
-            }
-        }
+        float savedHealthPercent = player.health.GetHealthPercent();
 
-        itemToUnequip.RemoveModifiers(playerStats);
+        var slotToUnequip = equipList.Find(slot => slot.equippedItem == itemToUnequip);
+        if (slotToUnequip != null)
+            slotToUnequip.equippedItem = null;
+
+        itemToUnequip.RemoveModifiers(player.stats);
+        itemToUnequip.RemoveItemEffect();
+
+        player.health.SetHealthPercent(savedHealthPercent);
         AddItem(itemToUnequip);
     }
 }

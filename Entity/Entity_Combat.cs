@@ -1,8 +1,11 @@
+using System;
 using Unity.Android.Gradle;
 using UnityEngine;
 
 public class Entity_Combat : MonoBehaviour
 {
+    public event Action<float> OnDoingPhysicalDamage;
+
     private Entity_VFX vfx;
     private Entity_Stats stats;
 
@@ -36,14 +39,17 @@ public class Entity_Combat : MonoBehaviour
             float physDamage = attackData.phyiscalDamage;
             float elemDamage = attackData.elementalDamage;
             ElementType element = attackData.element;
-             
+
             bool targetGotHit = damagable.TakeDamage(physDamage, elemDamage, element, transform);
 
             if (element != ElementType.None)
                 statusHandler?.ApplyStatusEffect(element, attackData.effectData);
 
             if (targetGotHit)
+            {
+                OnDoingPhysicalDamage?.Invoke(physDamage);
                 vfx.CreateOnHitVFX(target.transform, attackData.isCrit, element);
+            }
         }
     }
 

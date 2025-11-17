@@ -42,6 +42,9 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void Refund()
     {
+        if (isUnlocked == false || skillData.unlockedByDefault)
+            return;
+
         isUnlocked = false;
         isLocked = false;
         UpdateIconColor(GetColorByHex(lockedColorHex));
@@ -94,7 +97,7 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             node.LockChildNodes();
         }
     }
-    
+
     // 현재 나와 연결된 모든 node들을 Lock 시킴
     public void LockChildNodes()
     {
@@ -133,7 +136,7 @@ public class UI_TreeNode : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         ui.skillToolTip.ShowToolTip(false, rect);
 
-       if (CanBeHighlight())
+        if (CanBeHighlight())
             ToggleNodeHighlight(false);
     }
 
