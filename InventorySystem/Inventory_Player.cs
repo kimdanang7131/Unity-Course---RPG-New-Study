@@ -3,13 +3,18 @@ using UnityEngine;
 
 public class Inventory_Player : Inventory_Base
 {
+    public int gold = 10000;
+
     private Player player;
     public List<Inventory_EquipmentSlot> equipList;
+
+    public Inventory_Storage storage;
 
     protected override void Awake()
     {
         base.Awake();
         player = GetComponent<Player>();
+        storage = FindFirstObjectByType<Inventory_Storage>();
     }
 
     public void TryEquipItem(Inventory_Item item)
@@ -45,12 +50,12 @@ public class Inventory_Player : Inventory_Base
         slot.equippedItem.AddItemEffect(player);
 
         player.health.SetHealthPercent(savedHealthPercent);
-        RemoveItem(itemToEquip);
+        RemoveOneItem(itemToEquip);
     }
 
     public void UnequipItem(Inventory_Item itemToUnequip, bool replacingItem = false)
     {
-        if (CanAddItem() == false && replacingItem == false)
+        if (CanAddItem(itemToUnequip) == false)
         {
             Debug.Log("No Space");
             return;

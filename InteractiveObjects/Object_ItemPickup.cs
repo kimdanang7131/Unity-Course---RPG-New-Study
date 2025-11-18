@@ -3,15 +3,8 @@ using UnityEngine;
 public class Object_ItemPickup : MonoBehaviour
 {
     private SpriteRenderer sr;
+
     [SerializeField] private ItemDataSO itemData;
-
-    private Inventory_Item itemToAdd;
-    private Inventory_Base inventory; // 플레이어의 inventory 참조
-
-    void Awake()
-    {
-        itemToAdd = new Inventory_Item(itemData);
-    }
 
     void OnValidate()
     {
@@ -24,14 +17,18 @@ public class Object_ItemPickup : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        inventory = collision.GetComponent<Inventory_Base>();
+        Inventory_Item itemToAdd = new Inventory_Item(itemData);
+        Inventory_Player inventory = collision.GetComponent<Inventory_Player>();
+        Inventory_Storage storage = inventory.storage;
 
-        if (inventory == null)
+        if (itemData.itemType == ItemType.Material)
+        {
+            storage.AddMaterialToStash(itemToAdd);
+            Destroy(gameObject);
             return;
+        }
 
-        bool canAddItem = inventory.CanAddItem() || inventory.StackableItem(itemToAdd) != null;
-
-        if (canAddItem)
+        if (inventory.CanAddItem(itemToAdd))
         {
             inventory.AddItem(itemToAdd);
             Destroy(gameObject);

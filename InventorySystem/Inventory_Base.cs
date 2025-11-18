@@ -26,12 +26,17 @@ public class Inventory_Base : MonoBehaviour
         if (consumable.stackSize > 1)
             consumable.RemoveStack();
         else
-            RemoveItem(consumable);
+            RemoveOneItem(consumable);
 
         OnInventoryChange?.Invoke();
     }
 
-    public bool CanAddItem() => itemList.Count < maxInventorySize;
+    public bool CanAddItem(Inventory_Item itemToAdd)
+    {
+        bool hasStakable = StackableItem(itemToAdd) != null;
+        return hasStakable || itemList.Count < maxInventorySize;
+    }
+
     public Inventory_Item StackableItem(Inventory_Item itemToAdd)
     {
         List<Inventory_Item> stackableItems = itemList.FindAll(item => item.itemData == itemToAdd.itemData);
@@ -58,9 +63,15 @@ public class Inventory_Base : MonoBehaviour
         OnInventoryChange?.Invoke();
     }
 
-    public void RemoveItem(Inventory_Item itemToRemove)
+    public void RemoveOneItem(Inventory_Item itemToRemove)
     {
-        itemList.Remove(itemToRemove);
+        Inventory_Item itemInventory = itemList.Find(item => item == itemToRemove);
+
+        if (itemInventory.stackSize > 1)
+            itemToRemove.RemoveStack();
+        else
+            itemList.Remove(itemToRemove);
+
         OnInventoryChange?.Invoke();
     }
 
