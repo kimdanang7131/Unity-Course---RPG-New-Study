@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Inventory_Storage : Inventory_Base
@@ -6,7 +7,19 @@ public class Inventory_Storage : Inventory_Base
     public Inventory_Player playerInventory { get; private set; }
     public List<Inventory_Item> materialStash;
 
-    public void ConsumeMaterials(Inventory_Item itemToCraft)
+
+    public void CraftItem(Inventory_Item itemToCraft)
+    {
+        ConsumeMaterials(itemToCraft);
+        playerInventory.AddItem(itemToCraft);
+    }
+
+    public bool CanCraftItem(Inventory_Item itemToCraft)
+    {
+        return HasEnoughMaterials(itemToCraft) && playerInventory.CanAddItem(itemToCraft);
+    }
+
+    private void ConsumeMaterials(Inventory_Item itemToCraft)
     {
         foreach (var requiredItem in itemToCraft.itemData.craftRecipe)
         {
@@ -86,16 +99,20 @@ public class Inventory_Storage : Inventory_Base
         return amount;
     }
 
-    public void AddMaterialToStash(Inventory_Item item)
+    public void AddMaterialToStash(Inventory_Item itemToAdd)
     {
-        var stackableItem = StackableInStash(item);
+        var stackableItem = StackableInStash(itemToAdd);
 
         if (stackableItem != null)
             stackableItem.AddStack();
         else
-            materialStash.Add(item);
+        {
+            var newItemtoAdd = new Inventory_Item(itemToAdd.itemData);
+            materialStash.Add(newItemtoAdd);
+        }
 
         TriggerUpdateUI();
+        materialStash = materialStash.OrderBy(item => item.itemData.name).ToList();
     }
 
     public Inventory_Item StackableInStash(Inventory_Item itemToAdd)

@@ -27,18 +27,27 @@ public class UI_ItemSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHand
         if (itemInSlot == null || itemInSlot.itemData.itemType == ItemType.Material)
             return;
 
-        if (itemInSlot.itemData.itemType == ItemType.Consumable)
-        {
-            if (itemInSlot.itemEffect.CanBeUsed() == false)
-                return;
+        bool alternativeInput = Input.GetKey(KeyCode.LeftControl);
 
-            inventory.TryUseItem(itemInSlot);
+        if (alternativeInput)
+        {
+            inventory.RemoveOneItem(itemInSlot);
         }
         else
-            inventory.TryEquipItem(itemInSlot);
+        {
+            if (itemInSlot.itemData.itemType == ItemType.Consumable)
+            {
+                if (itemInSlot.itemEffect.CanBeUsed() == false)
+                    return;
 
-        if (itemInSlot == null)
-            ui.itemToolTip.ShowToolTip(false, null);
+                inventory.TryUseItem(itemInSlot);
+            }
+            else
+                inventory.TryEquipItem(itemInSlot);
+
+            if (itemInSlot == null)
+                ui.itemToolTip.ShowToolTip(false, null);
+        }
     }
 
     public void UpdateSlot(Inventory_Item item)
@@ -58,7 +67,7 @@ public class UI_ItemSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHand
         itemStackSize.text = item.stackSize > 1 ? item.stackSize.ToString() : "";
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
         if (itemInSlot == null)
             return;
